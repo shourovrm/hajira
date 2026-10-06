@@ -51,6 +51,7 @@ Split of memory: CLAUDE.md = rules, `DECISIONS.md` + `docs/decisions/` = knowled
 ## Build
 - Android app, Kotlin + Compose, single `:app` module. Versions in `gradle/libs.versions.toml` are pinned to what `~/repos/fyi-player` uses so the shared `~/.gradle` cache already holds every artifact. This laptop is short on disk: do not install another Gradle, JDK, SDK platform or build-tools version, and check the cache before bumping any version.
 - System JDK 21 is corrupt on this machine. Build with `JAVA_HOME=~/.gradle/jdks/temurin-21 ./gradlew --offline <task>`; `--offline` proves nothing new is being downloaded.
+- Release builds only, never debug: `assembleRelease` for the APK, `testReleaseUnitTest` for unit tests. Signing comes from the gitignored `keystore.properties` and `hazira-release.jks` in the repo root.
 
 ## Verification
 Nothing is "done" until exercised for real: run the test suite AND drive the changed flow end-to-end in the running app on the ADB-connected phone. Other sessions share that phone; check what is in the foreground before taking the screen. Report failures verbatim. Clean up test data. Never claim a fix works because it compiles.
