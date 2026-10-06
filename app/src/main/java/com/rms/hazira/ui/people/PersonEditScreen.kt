@@ -272,25 +272,47 @@ private fun TimePickerDialog(initialTime: LocalTime, onConfirm: (LocalTime) -> U
     )
 }
 
+/** One sentence under the choice, so the amount field cannot be misread. */
+private fun rateExplanation(rateKind: RateKind): String {
+    return when (rateKind) {
+        RateKind.PER_VISIT -> "The amount is for each day marked as came."
+        RateKind.WEEKLY -> "The amount is for each week with at least one day marked as came. A week runs Saturday to Friday."
+        RateKind.MONTHLY -> "The amount is for the whole month."
+        RateKind.PER_UNIT -> "The amount is for each unit delivered."
+    }
+}
+
 @Composable
 private fun RateChoice(form: PersonForm) {
-    val secondRateKind = if (form.isDelivery) RateKind.PER_UNIT else RateKind.PER_VISIT
-    val secondLabel = if (form.isDelivery) "Per unit" else "Per visit"
+    // A delivery is paid by the amount delivered, everyone else by the day they come, so the
+    // first choice depends on the kind. Weekly and monthly are fixed amounts for both.
+    val firstRateKind = if (form.isDelivery) RateKind.PER_UNIT else RateKind.PER_VISIT
+    val firstLabel = if (form.isDelivery) "Per unit" else "Daily"
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionLabel(text = "Rate")
+        SectionLabel(text = "Paid")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = form.rateKind == firstRateKind,
+                onClick = { form.rateKind = firstRateKind },
+                label = { Text(text = firstLabel) },
+            )
+            FilterChip(
+                selected = form.rateKind == RateKind.WEEKLY,
+                onClick = { form.rateKind = RateKind.WEEKLY },
+                label = { Text(text = "Weekly") },
+            )
             FilterChip(
                 selected = form.rateKind == RateKind.MONTHLY,
                 onClick = { form.rateKind = RateKind.MONTHLY },
                 label = { Text(text = "Monthly") },
             )
-            FilterChip(
-                selected = form.rateKind == secondRateKind,
-                onClick = { form.rateKind = secondRateKind },
-                label = { Text(text = secondLabel) },
-            )
         }
+        Text(
+            text = rateExplanation(form.rateKind),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         OutlinedTextField(
             value = form.rateText,
             onValueChange = { text -> form.rateText = text },

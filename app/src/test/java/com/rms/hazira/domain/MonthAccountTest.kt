@@ -192,4 +192,49 @@ class MonthAccountTest {
 
         assertFalse(isDueOn(unscheduled, septemberDate(5)))
     }
+
+    @Test
+    fun weeklyChargeCountsWeeksWithACameDay() {
+        val helper = testPerson(rateKind = RateKind.WEEKLY, rateTaka = 1_200)
+        // 7 and 8 September are in the same Saturday-to-Friday week, so they count once.
+        val records = cameRecordsOn(helper.id, listOf(7, 8, 15, 22))
+
+        val account = buildMonthAccount(helper, september2026, records, emptyList())
+
+        assertEquals(3, account.chargedWeeks)
+        assertEquals(3_600, account.chargeTaka)
+    }
+
+    @Test
+    fun weekAcrossTwoMonthsIsChargedOnceToTheMonthOfItsFirstCameDay() {
+        val helper = testPerson(rateKind = RateKind.WEEKLY, rateTaka = 1_200)
+        val october2026 = YearMonth.of(2026, 10)
+        // Saturday 26 September to Friday 2 October is one week.
+        val records = listOf(
+            cameRecord(helper.id, septemberDate(30)),
+            cameRecord(helper.id, october2026.atDay(1)),
+        )
+
+        val septemberAccount = buildMonthAccount(helper, september2026, records, emptyList())
+        val octoberAccount = buildMonthAccount(helper, october2026, records, emptyList())
+
+        assertEquals(1_200, septemberAccount.chargeTaka)
+        assertEquals(0, octoberAccount.chargeTaka)
+    }
+
+    @Test
+    fun weekThatStartedInThePreviousMonthIsNotChargedAgain() {
+        val helper = testPerson(rateKind = RateKind.WEEKLY, rateTaka = 1_200)
+        val august2026 = YearMonth.of(2026, 8)
+        val records = listOf(
+            cameRecord(helper.id, august2026.atDay(31)),
+            cameRecord(helper.id, septemberDate(1)),
+        )
+
+        val septemberAccount = buildMonthAccount(helper, september2026, records, emptyList())
+
+        assertEquals(0, septemberAccount.chargeTaka)
+        // The Dues screen relies on this date to load the August days the rule above needs.
+        assertEquals(august2026.atDay(29), firstDateNeededFor(september2026))
+    }
 }

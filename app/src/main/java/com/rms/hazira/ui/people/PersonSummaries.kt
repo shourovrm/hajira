@@ -61,12 +61,13 @@ fun shortName(weekday: DayOfWeek): String {
     return weekday.getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
 }
 
-/** "৳3,000 a month", "৳500 a visit" or "৳90 a litre". */
+/** "৳3,000 a month", "৳1,200 a week", "৳500 a day" or "৳90 a litre". */
 fun describeRate(person: Person): String {
     val amount = formatTaka(person.rateTaka)
     return when (person.rateKind) {
         RateKind.MONTHLY -> "$amount a month"
-        RateKind.PER_VISIT -> "$amount a visit"
+        RateKind.WEEKLY -> "$amount a week"
+        RateKind.PER_VISIT -> "$amount a day"
         RateKind.PER_UNIT -> amount + " a " + person.unitName.ifBlank { "unit" }
     }
 }

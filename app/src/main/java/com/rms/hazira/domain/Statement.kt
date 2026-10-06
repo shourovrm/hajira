@@ -19,17 +19,22 @@ fun formatPaymentDate(date: LocalDate): String {
 }
 
 /**
- * How the charge was worked out, without the total: "13 classes at ৳500", "32 litre at ৳90"
- * or "Monthly fee ৳3,000".
+ * How the charge was worked out, without the total: "13 classes at ৳500", "4 weeks at ৳1,200",
+ * "32 litre at ৳90" or "Monthly fee ৳3,000".
  */
 fun describeCharge(account: MonthAccount): String {
     val person = account.person
     val rate = formatTaka(person.rateTaka)
     return when (person.rateKind) {
         RateKind.MONTHLY -> "Monthly fee $rate"
+        RateKind.WEEKLY -> "${account.chargedWeeks} ${weekWord(account.chargedWeeks)} at $rate"
         RateKind.PER_VISIT -> "${account.cameDays} ${visitWord(person.kind, account.cameDays)} at $rate"
         RateKind.PER_UNIT -> "${formatQuantityWithUnit(account.quantityTotal, person.unitName)} at $rate"
     }
+}
+
+private fun weekWord(count: Int): String {
+    return if (count == 1) "week" else "weeks"
 }
 
 private fun visitWord(kind: ServiceKind, count: Int): String {

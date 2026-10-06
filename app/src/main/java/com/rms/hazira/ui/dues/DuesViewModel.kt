@@ -9,6 +9,7 @@ import com.rms.hazira.domain.MonthAccount
 import com.rms.hazira.domain.Payment
 import com.rms.hazira.domain.Person
 import com.rms.hazira.domain.buildMonthAccount
+import com.rms.hazira.domain.firstDateNeededFor
 import java.time.YearMonth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,7 +61,7 @@ class DuesViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun observeMonth(month: YearMonth) = combine(
         repository.observePeople(includeInactive = true),
-        repository.observeDayRecords(month.atDay(1), month.atEndOfMonth()),
+        repository.observeDayRecords(firstDateNeededFor(month), month.atEndOfMonth()),
         repository.observePaymentsForMonth(month),
     ) { people, records, payments ->
         buildUiState(month, people, records, payments)

@@ -22,7 +22,10 @@ enum class RateKind {
     /** One fixed amount for the month, whatever the attendance. */
     MONTHLY,
 
-    /** An amount for each day marked as came. */
+    /** One fixed amount for each week the service ran in. A week runs Saturday to Friday. */
+    WEEKLY,
+
+    /** An amount for each day marked as came. Shown to the user as "Daily". */
     PER_VISIT,
 
     /** An amount for each unit delivered, for example each litre. */
