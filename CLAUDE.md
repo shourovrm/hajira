@@ -53,6 +53,11 @@ Split of memory: CLAUDE.md = rules, `DECISIONS.md` + `docs/decisions/` = knowled
 - System JDK 21 is corrupt on this machine. Build with `JAVA_HOME=~/.gradle/jdks/temurin-21 ./gradlew --offline <task>`; `--offline` proves nothing new is being downloaded.
 - Release builds only, never debug: `assembleRelease` for the APK, `testReleaseUnitTest` for unit tests. Signing comes from the gitignored `keystore.properties` and `hazira-release.jks` in the repo root.
 
+## Releases
+- Every release is a pre-release. Versions stay below 1.0.0 (`0.1.0`, `0.1.1`, `0.2.0`); never tag `1.0.0` or higher unless the user says so.
+- A release is: bump `versionName` and `versionCode` in `app/build.gradle.kts`, build the release APK, tag `v<versionName>`, then `gh release create v<versionName> --prerelease` with the APK attached as `hazira-<versionName>-release.apk`.
+- Push code and publish a release only when the user asks.
+
 ## Verification
 Nothing is "done" until exercised for real: run the test suite AND drive the changed flow end-to-end in the running app on the ADB-connected phone. Other sessions share that phone; check what is in the foreground before taking the screen. Report failures verbatim. Clean up test data. Never claim a fix works because it compiles.
 
