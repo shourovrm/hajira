@@ -66,6 +66,11 @@ dependencies {
     implementation(libs.compose.material.icons.core)
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)
+    constraints {
+        // navigation-compose asks for serialization-core 1.7.3, which is not in the offline
+        // Gradle cache; 1.11.0 is, because fyi-player resolves to it.
+        implementation(libs.kotlinx.serialization.core)
+    }
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.room.runtime)

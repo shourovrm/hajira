@@ -11,6 +11,7 @@ material3 = "1.4.0"
 room = "2.8.4"
 navigationCompose = "2.9.7"
 junit = "4.13.2"
+kotlinxSerialization = "1.11.0"
 lifecycleRuntime = "2.9.4"
 
 [plugins]
@@ -35,3 +36,4 @@ room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntime" }
 junit = { module = "junit:junit", version.ref = "junit" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }

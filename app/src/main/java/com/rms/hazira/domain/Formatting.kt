@@ -1,9 +1,14 @@
 package com.rms.hazira.domain
 
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 
-private val takaFormat = DecimalFormat("#,##0")
-private val quantityFormat = DecimalFormat("0.##")
+// Fixed to English symbols: the interface is in English, and a phone set to Bangla would
+// otherwise mix Bangla digits into English text and into the shared statement.
+private val englishSymbols = DecimalFormatSymbols(Locale.ENGLISH)
+private val takaFormat = DecimalFormat("#,##0", englishSymbols)
+private val quantityFormat = DecimalFormat("0.##", englishSymbols)
 
 /** 20380 becomes "৳20,380". A negative amount keeps its minus sign in front of the symbol. */
 fun formatTaka(amountTaka: Int): String {
