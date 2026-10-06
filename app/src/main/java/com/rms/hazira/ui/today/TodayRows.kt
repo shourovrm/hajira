@@ -115,26 +115,33 @@ internal fun MarkedRow(entry: MarkedEntry, onClick: () -> Unit) {
     }
 }
 
-/** A quiet line: tapping it is for the rare make-up lesson or extra delivery. */
+/**
+ * Someone who is not scheduled for the shown day. People do come on other days (a make-up
+ * lesson, a changed week), so the row carries a visible "Mark" action instead of relying on the
+ * user guessing that the line can be tapped.
+ */
 @Composable
 internal fun NotDueRow(person: Person, shownDate: LocalDate, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 48.dp)
+            .heightIn(min = 56.dp)
             .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = person.name, style = MaterialTheme.typography.bodyLarge)
+            Text(
+                text = nextDueText(person, shownDate),
+                style = MaterialTheme.typography.bodyMedium,
+                color = HaziraColours.MutedText,
+            )
+        }
         Text(
-            text = person.name,
-            style = MaterialTheme.typography.bodyLarge,
-            color = HaziraColours.MutedText,
-            modifier = Modifier.weight(1f),
-        )
-        Text(
-            text = nextDueText(person, shownDate),
-            style = MaterialTheme.typography.bodyMedium,
-            color = HaziraColours.MutedText,
+            text = "Mark",
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(horizontal = 12.dp),
         )
     }
 }
@@ -163,7 +170,7 @@ private fun nextDueText(person: Person, shownDate: LocalDate): String {
     for (daysAhead in 1L..7L) {
         val candidateDate = shownDate.plusDays(daysAhead)
         if (isDueOn(person, candidateDate)) {
-            return "Next: " + formatWeekdayName(candidateDate.dayOfWeek)
+            return "Usually next on " + formatWeekdayName(candidateDate.dayOfWeek)
         }
     }
     return "No days set"

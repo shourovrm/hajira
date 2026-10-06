@@ -142,7 +142,7 @@ private fun TodayList(
         }
 
         if (notDue.isNotEmpty()) {
-            val label = if (uiState.isShowingToday) "Not due today" else "Not due on this day"
+            val label = if (uiState.isShowingToday) "Not expected today" else "Not expected on this day"
             item(key = "label-not-due") { SectionLabel(label) }
             items(notDue, key = { person -> "notdue-${person.id}" }) { person ->
                 NotDueRow(

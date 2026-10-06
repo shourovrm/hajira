@@ -262,16 +262,48 @@ private fun DayPanel(
                     modifier = Modifier.padding(top = 8.dp),
                 )
             }
+            val isInFuture = date.isAfter(uiState.today)
             for (person in peopleOnDay) {
                 val record = uiState.recordsByPersonDay[PersonDay(person.id, date)]
+                val unmarkedText = if (isInFuture) "Not yet" else "Not marked"
                 DayPanelRow(
                     person = person,
                     record = record,
-                    isInFuture = date.isAfter(uiState.today),
+                    unmarkedText = unmarkedText,
+                    isTappable = !isInFuture,
                     onClick = { onEditDay(person, date) },
                 )
             }
+            if (!isInFuture) {
+                NotExpectedPeople(
+                    people = uiState.people.filter { person -> person !in peopleOnDay },
+                    onMark = { person -> onEditDay(person, date) },
+                )
+            }
         }
+    }
+}
+
+/** People who were not scheduled for the day. Any of them can still be marked as having come. */
+@Composable
+private fun NotExpectedPeople(people: List<Person>, onMark: (Person) -> Unit) {
+    if (people.isEmpty()) {
+        return
+    }
+    Text(
+        text = "Not expected this day",
+        style = MaterialTheme.typography.labelLarge,
+        color = HaziraColours.MutedText,
+        modifier = Modifier.padding(top = 12.dp),
+    )
+    for (person in people) {
+        DayPanelRow(
+            person = person,
+            record = null,
+            unmarkedText = "Mark",
+            isTappable = true,
+            onClick = { onMark(person) },
+        )
     }
 }
 
@@ -279,10 +311,11 @@ private fun DayPanel(
 private fun DayPanelRow(
     person: Person,
     record: DayRecord?,
-    isInFuture: Boolean,
+    unmarkedText: String,
+    isTappable: Boolean,
     onClick: () -> Unit,
 ) {
-    val rowModifier = if (isInFuture) Modifier else Modifier.clickable(onClick = onClick)
+    val rowModifier = if (isTappable) Modifier.clickable(onClick = onClick) else Modifier
     Row(
         modifier = rowModifier.fillMaxWidth().heightIn(min = 48.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -306,7 +339,6 @@ private fun DayPanelRow(
                 fontWeight = FontWeight.SemiBold,
             )
         } else {
-            val unmarkedText = if (isInFuture) "Not yet" else "Not marked"
             Text(
                 text = unmarkedText,
                 style = MaterialTheme.typography.bodyMedium,
