@@ -7,7 +7,7 @@
 
 ## Next
 - Version 0.1.0 is built and pushed: Today, People, Month (three forms) and Dues, with daily, weekly, monthly and per-unit rates.
-- Checked on the phone on 2026-10-07: add person, mark a day, quantity sheet, Month forms, dues, payment. NOT yet checked on the phone: the weekly rate option and the status bar icon fix.
+- Checked on the phone on 2026-10-07: add person, mark a day, quantity sheet, Month forms, dues, payment, the weekly rate, status bar icons.
 - Not built yet: reminders, home-screen widget, backup/export, Bangla UI, dark theme, back-dating a payment.
 
 ## Gotchas (cross-cutting)
