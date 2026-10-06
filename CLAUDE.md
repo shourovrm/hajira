@@ -54,8 +54,9 @@ Split of memory: CLAUDE.md = rules, `DECISIONS.md` + `docs/decisions/` = knowled
 - Release builds only, never debug: `assembleRelease` for the APK, `testReleaseUnitTest` for unit tests. Signing comes from the gitignored `keystore.properties` and `hazira-release.jks` in the repo root.
 
 ## Releases
-- Every release is a pre-release. Versions stay below 1.0.0 (`0.1.0`, `0.1.1`, `0.2.0`); never tag `1.0.0` or higher unless the user says so.
-- A release is: bump `versionName` and `versionCode` in `app/build.gradle.kts`, build the release APK, tag `v<versionName>`, then `gh release create v<versionName> --prerelease` with the APK attached as `hazira-<versionName>-release.apk`.
+- The app is pre-1.0. Versions stay below 1.0.0 (`0.1.0`, `0.1.1`, `0.2.0`); never tag `1.0.0` or higher unless the user says so.
+- Do NOT set GitHub's "Pre-release" flag: the 0.x number carries that meaning, and the newest release should show as "Latest".
+- A release is: bump `versionName` and `versionCode` in `app/build.gradle.kts`, build the release APK, tag `v<versionName>`, then `gh release create v<versionName>` with the APK attached as `hazira-<versionName>-release.apk`.
 - Push code and publish a release only when the user asks.
 
 ## Verification
