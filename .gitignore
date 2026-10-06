@@ -1,0 +1,24 @@
+*.iml
+.gradle/
+.kotlin/
+/.idea/
+.DS_Store
+build/
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# signing material: never committed
+*.jks
+*.keystore
+keystore.properties
+
+# release artifact
+*.apk
+*.aab
+
+# tool scratch
+.playwright-mcp/
+.commandcode/
+.claude/settings.local.json

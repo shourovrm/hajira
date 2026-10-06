@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hazira — four directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@600;700&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAFBF7;
+    --rule: #C3D3EA;
+    --ink: #1E3A8A;
+    --absent: #C4313D;
+    --cover: #0E5A4B;
+    --cover-soft: #DDEBE6;
+    --owed: #E2A52B;
+    --owed-soft: #FBF0D6;
+    --text: #16211F;
+    --muted: #5C6B68;
+    --line: #DFE5E1;
+    --desk: #E9EEEA;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hind Siliguri", "Noto Sans Bengali", system-ui, sans-serif;
+    background: var(--desk);
+    color: var(--text);
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+    padding: 40px 32px 80px;
+  }
+  .bangla-name { font-family: "Baloo Da 2", "Hind Siliguri", sans-serif; }
+
+  /* ---------- page ---------- */
+  .page-head { max-width: 1180px; margin: 0 auto 36px; }
+  .page-head h1 { font-size: 40px; line-height: 1.1; font-weight: 700; color: var(--cover); }
+  .page-head h1 .bangla-name { font-size: 46px; margin-right: 10px; }
+  .page-head p { max-width: 64ch; margin-top: 10px; font-size: 17px; color: var(--muted); }
+
+  .direction {
+    max-width: 1180px; margin: 0 auto 56px;
+    display: grid; grid-template-columns: 300px 340px 340px; gap: 40px;
+    align-items: start; justify-content: start;
+  }
+  .direction-notes h2 { font-size: 26px; line-height: 1.2; font-weight: 700; }
+  .direction-notes .letter {
+    display: inline-block; width: 34px; height: 34px; border-radius: 50%;
+    background: var(--cover); color: #fff; text-align: center; line-height: 34px;
+    font-weight: 700; margin-bottom: 12px;
+  }
+  .direction-notes p { margin-top: 10px; font-size: 15.5px; color: var(--muted); }
+  .direction-notes ul { margin: 14px 0 0 18px; font-size: 15px; }
+  .direction-notes li { margin-bottom: 6px; }
+  .screen-caption { font-size: 14px; color: var(--muted); margin-top: 12px; text-align: center; }
+
+  @media (max-width: 1100px) {
+    .direction { grid-template-columns: 340px 340px; }
+    .direction-notes { grid-column: 1 / -1; max-width: 62ch; }
+  }
+  @media (max-width: 760px) {
+    body { padding: 24px 12px 60px; }
+    .direction { grid-template-columns: 340px; justify-content: center; }
+  }
+
+  /* ---------- phone ---------- */
+  .phone {
+    width: 340px; height: 720px; border-radius: 34px; overflow: hidden;
+    background: var(--paper); border: 7px solid #1B2422; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .status-bar {
+    height: 28px; flex: none; display: flex; justify-content: space-between; align-items: center;
+    padding: 0 20px; font-size: 12px; font-weight: 600;
+  }
+  .app-bar { flex: none; padding: 8px 18px 12px; }
+  .app-bar .date-line { font-size: 13px; color: var(--muted); }
+  .app-bar h3 { font-size: 23px; font-weight: 700; line-height: 1.2; }
+  .screen-body { flex: 1; overflow: hidden; padding: 0 14px; }
+  .bottom-nav {
+    flex: none; height: 62px; display: grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--line); background: #fff; text-align: center; font-size: 12px;
+    color: var(--muted); align-items: center;
+  }
+  .bottom-nav div { padding-top: 4px; }
+  .bottom-nav .nav-dot {
+    display: block; width: 44px; height: 24px; border-radius: 12px; margin: 0 auto 2px;
+    line-height: 24px; font-size: 14px;
+  }
+  .bottom-nav .current { color: var(--cover); font-weight: 600; }
+  .bottom-nav .current .nav-dot { background: var(--cover-soft); }
+
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%; flex: none; color: #fff;
+    display: grid; place-items: center; font-weight: 700; font-size: 16px;
+  }
+  .tone-green { background: #0E5A4B; } .tone-blue { background: #1E3A8A; }
+  .tone-plum { background: #7A3B69; } .tone-teal { background: #1F7A8C; }
+  .tone-rust { background: #A8552A; } .tone-slate { background: #4A5568; }
+
+  /* ---------- direction A: today ---------- */
+  .progress-strip {
+    display: flex; align-items: center; gap: 12px; margin: 2px 4px 14px;
+    font-size: 14px; color: var(--muted);
+  }
+  .progress-track { flex: 1; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+  .progress-track span { display: block; height: 100%; width: 50%; background: var(--cover); }
+  .section-label { font-size: 13px; font-weight: 600; color: var(--muted); margin: 10px 4px 6px; }
+  .today-row {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; background: #fff;
+    border: 1px solid var(--line); border-radius: 16px; margin-bottom: 8px;
+  }
+  .today-row .who { flex: 1; min-width: 0; }
+  .today-row .who b { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; }
+  .today-row .who span { font-size: 13px; color: var(--muted); }
+  .today-row.is-done { background: var(--cover-soft); border-color: transparent; }
+  .mark-buttons { display: flex; gap: 6px; }
+  .mark-button {
+    height: 36px; min-width: 36px; padding: 0 10px; border-radius: 18px; border: 1.5px solid var(--line);
+    background: #fff; font: inherit; font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap;
+  }
+  .mark-button.came { background: var(--cover); border-color: var(--cover); color: #fff; }
+  .done-mark { font-size: 14px; font-weight: 600; color: var(--cover); text-align: right; line-height: 1.25; }
+  .done-mark small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+  .quiet-row { display: flex; justify-content: space-between; padding: 7px 14px; font-size: 14px; color: var(--muted); }
+
+  .scrim { position: absolute; inset: 0; background: rgba(16, 28, 25, .45); }
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; background: #fff;
+    border-radius: 26px 26px 0 0; padding: 12px 20px 22px;
+  }
+  .sheet .grabber { width: 36px; height: 4px; border-radius: 2px; background: var(--line); margin: 0 auto 14px; }
+  .sheet h4 { font-size: 20px; font-weight: 700; }
+  .sheet .sheet-sub { font-size: 14px; color: var(--muted); }
+  .stepper { display: flex; align-items: center; justify-content: center; gap: 22px; margin: 18px 0 6px; }
+  .stepper button {
+    width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid var(--line); background: #fff;
+    font-size: 26px; color: var(--cover); font-family: inherit;
+  }
+  .stepper .amount { font-size: 44px; font-weight: 700; line-height: 1; }
+  .stepper .amount small { font-size: 18px; font-weight: 500; color: var(--muted); }
+  .chip-row { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
+  .chip { padding: 6px 14px; border-radius: 16px; border: 1.5px solid var(--line); font-size: 14px; }
+  .chip.selected { background: var(--cover-soft); border-color: var(--cover); color: var(--cover); font-weight: 600; }
+  .note-field {
+    border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 14px;
+    color: var(--muted); margin-bottom: 14px;
+  }
+  .primary-button {
+    display: block; width: 100%; height: 50px; border-radius: 25px; border: 0; background: var(--cover);
+    color: #fff; font: inherit; font-size: 16px; font-weight: 600;
+  }
+  .text-button { display: block; text-align: center; margin-top: 12px; font-size: 14px; font-weight: 600; color: var(--absent); }
+
+  /* ---------- direction B: register ---------- */
+  .register-phone { background: var(--cover); }
+  .register-phone .status-bar, .register-phone .app-bar { color: #fff; }
+  .register-phone .app-bar .date-line { color: #B9D6CE; }
+  .month-switch { display: flex; justify-content: space-between; align-items: baseline; }
+  .month-switch span { font-size: 14px; color: #B9D6CE; }
+  .register-page {
+    flex: 1; background: var(--paper); border-radius: 20px 20px 0 0; overflow: hidden;
+    border-left: 3px double var(--absent); margin-left: 0;
+  }
+  table.register { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table.register th, table.register td {
+    border-bottom: 1px solid var(--rule); border-right: 1px solid var(--rule);
+    height: 58px; text-align: center; padding: 0;
+  }
+  table.register thead th { height: 44px; font-weight: 600; font-size: 13px; color: var(--muted); line-height: 1.15; }
+  table.register thead th small { display: block; font-weight: 400; font-size: 11px; }
+  table.register .name-cell { text-align: left; padding-left: 10px; width: 98px; line-height: 1.15; }
+  table.register .name-cell b { display: block; font-size: 14px; font-weight: 600; color: var(--text); }
+  table.register .name-cell span { font-size: 11.5px; color: var(--muted); }
+  table.register .today-column { background: var(--owed-soft); }
+  table.register thead .today-column { color: var(--text); font-weight: 700; }
+  table.register .total-cell { width: 44px; font-weight: 700; color: var(--ink); border-right: 0; }
+  .tick { color: var(--ink); font-size: 19px; font-weight: 700; }
+  .cross { color: var(--absent); font-size: 17px; font-weight: 700; }
+  .litres { color: var(--ink); font-weight: 700; font-size: 15px; }
+  .off-day { color: var(--rule); }
+  .pending-ring { display: inline-block; width: 20px; height: 20px; border-radius: 50%; border: 2px dashed var(--owed); }
+  .register-foot {
+    display: flex; justify-content: space-between; padding: 12px 14px; font-size: 14px; color: var(--muted);
+  }
+  .register-foot b { color: var(--text); }
+
+  .person-head { display: flex; gap: 12px; align-items: center; padding: 4px 4px 12px; }
+  .person-head b { font-size: 19px; font-weight: 700; display: block; line-height: 1.2; }
+  .person-head span { font-size: 13.5px; color: var(--muted); }
+  .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
+  .month-grid div {
+    height: 44px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+    position: relative; text-align: center; padding-top: 16px;
+  }
+  .month-grid .weekday { height: 26px; padding-top: 4px; font-size: 12px; color: var(--muted); font-weight: 600; }
+  .month-grid div i { position: absolute; top: 2px; left: 4px; font-style: normal; font-size: 10.5px; color: var(--muted); }
+  .month-grid .is-today { background: var(--owed-soft); }
+  .tally { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 14px 0 10px; }
+  .tally div { border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; background: #fff; }
+  .tally b { display: block; font-size: 22px; font-weight: 700; line-height: 1.1; }
+  .tally span { font-size: 12.5px; color: var(--muted); }
+  .hint-line { font-size: 13.5px; color: var(--muted); padding: 0 4px; }
+
+  /* ---------- direction C: accounts ---------- */
+  .due-banner { background: var(--cover); color: #fff; border-radius: 20px; padding: 12px 18px; margin-bottom: 6px; }
+  .due-banner .label { font-size: 13.5px; color: #B9D6CE; }
+  .due-banner .figure { font-size: 38px; font-weight: 700; line-height: 1.15; }
+  .due-banner .split { display: flex; justify-content: space-between; font-size: 13.5px; margin-top: 8px; color: #D6E8E2; }
+  .paid-track { height: 6px; border-radius: 3px; background: rgba(255,255,255,.25); margin-top: 8px; overflow: hidden; }
+  .paid-track span { display: block; height: 100%; width: 49%; background: var(--owed); }
+  .account-row { display: flex; align-items: center; gap: 12px; padding: 8px 4px; border-bottom: 1px solid var(--line); }
+  .account-row .who { flex: 1; min-width: 0; }
+  .account-row .who b { display: block; font-size: 15.5px; font-weight: 600; line-height: 1.25; }
+  .account-row .who span { font-size: 12.5px; color: var(--muted); }
+  .account-row .money { text-align: right; line-height: 1.25; }
+  .account-row .money b { font-size: 16px; font-weight: 700; display: block; }
+  .badge { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 8px; border-radius: 9px; }
+  .badge.due { background: var(--owed-soft); color: #7A5200; }
+  .badge.paid { background: var(--cover-soft); color: var(--cover); }
+
+  .statement { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; }
+  .statement-line { display: flex; justify-content: space-between; font-size: 15px; padding: 5px 0; }
+  .statement-line.minor { color: var(--muted); font-size: 14px; }
+  .statement-line.total { border-top: 1.5px solid var(--text); margin-top: 6px; padding-top: 10px; font-size: 19px; font-weight: 700; }
+  .statement h5 { font-size: 13.5px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+  .mini-days { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 10px; }
+  .mini-days span {
+    width: 21px; height: 21px; border-radius: 5px; font-size: 11px; display: grid; place-items: center;
+    background: var(--cover-soft); color: var(--cover); font-weight: 600;
+  }
+  .mini-days span.missed { background: #F7DADD; color: var(--absent); }
+  .button-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .outline-button {
+    height: 50px; border-radius: 25px; border: 1.5px solid var(--cover); background: #fff; color: var(--cover);
+    font: inherit; font-size: 14px; font-weight: 600;
+  }
+  .button-pair .primary-button { font-size: 14px; }
+
+  /* ---------- direction D: combined month ---------- */
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 12px; padding: 0 4px 10px; font-size: 12.5px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+  .dot.is-absent { background: transparent !important; border: 2px solid var(--absent); }
+  .dot.is-not-due { background: transparent !important; }
+  .combined-grid { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
+  .combined-grid .weekday { height: 24px; padding-top: 3px; text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .combined-day { height: 56px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 3px 4px; }
+  .combined-day .day-number { font-size: 12px; font-weight: 600; line-height: 1.2; }
+  .combined-day .dot-set { display: grid; grid-template-columns: repeat(3, 9px); gap: 4px; margin-top: 4px; }
+  .combined-day.is-selected { background: var(--owed-soft); outline: 2px solid var(--owed); outline-offset: -2px; }
+  .day-panel { margin-top: 12px; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 10px 14px; }
+  .day-panel h5 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .day-panel-row { display: flex; align-items: center; gap: 9px; font-size: 14px; padding: 3px 0; }
+  .day-panel-row .what { margin-left: auto; font-weight: 600; }
+  .day-panel-row .what.is-absent { color: var(--absent); }
+
+  .strip-axis { display: grid; grid-template-columns: repeat(30, 1fr); gap: 1px; font-size: 10px; color: var(--muted); margin: 0 4px 2px; }
+  .strip-block { margin: 0 4px 13px; }
+  .strip-title { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .strip-title b { font-size: 15px; font-weight: 600; }
+  .strip-title span { font-size: 13px; color: var(--muted); }
+  .strip { display: grid; grid-template-columns: repeat(30, 1fr); gap: 1px; align-items: end; height: 26px; }
+  .strip i { display: block; height: 18px; border-radius: 2px; }
+  .strip i.is-double { height: 26px; }
+  .strip i.is-absent { background: var(--absent) !important; height: 6px; }
+  .strip i.is-not-due { background: var(--line) !important; height: 3px; }
+</style>
+</head>
+<body>
+
+<header class="page-head">
+  <h1><span class="bangla-name">হাজিরা</span>Hazira</h1>
+  <p>Four ways the app can be organised. Each one treats a different question as the main one. The sample household and its numbers are the same in all four; directions A and B show Wednesday 7 October 2026, and C and D show the finished month of September 2026.</p>
+</header>
+
+<!-- ============ A ============ -->
+<section class="direction">
+  <div class="direction-notes">
+    <span class="letter">A</span>
+    <h2>Today list</h2>
+    <p>The app opens on the people expected today. Marking someone takes one tap, and the list shrinks as the day goes on.</p>
+    <ul>
+      <li>Only today's schedule is shown; people not due today are folded away.</li>
+      <li>Deliveries ask for a quantity, with the usual amount already filled in.</li>
+      <li>A reminder at the expected time and a home-screen widget would both land on this list.</li>
+      <li>Money sits on a separate tab and stays out of the daily routine.</li>
+    </ul>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="status-bar"><span>9:41</span><span>5G ▮</span></div>
+      <div class="app-bar">
+        <div class="date-line">Wednesday, 7 October</div>
+        <h3>Today</h3>
+      </div>
+      <div class="screen-body">
+        <div class="progress-strip">
+          <span>2 of 4 marked</span>
+          <div class="progress-track"><span></span></div>
+        </div>
+
+        <div class="section-label">Still to mark</div>
+        <div class="today-row">
+          <div class="avatar tone-green">K</div>
+          <div class="who"><b>Ustad Karim</b><span>Quran, 4:30 pm</span></div>
+          <div class="mark-buttons"><button class="mark-button">Absent</button><button class="mark-button came">Came</button></div>
+        </div>
+        <div class="today-row">
+          <div class="avatar tone-plum">S</div>
+          <div class="who"><b>Coaching</b><span>Science, 5:00 pm</span></div>
+          <div class="mark-buttons"><button class="mark-button">Missed</button><button class="mark-button came">Went</button></div>
+        </div>
+
+        <div class="section-label">Marked</div>
+        <div class="today-row is-done">
+          <div class="avatar tone-rust">R</div>
+          <div class="who"><b>Rina</b><span>House help</span></div>
+          <div class="done-mark">Came<small>8:10 am</small></div>
+        </div>
+        <div class="today-row is-done">
+          <div class="avatar tone-teal">J</div>
+          <div class="who"><b>Jalal</b><span>Milk delivery</span></div>
+          <div class="done-mark">1 litre<small>7:05 am</small></div>
+        </div>
+
+        <div class="section-label">Not due today</div>
+        <div class="quiet-row"><span>Sumon Sir, maths tutor</span><span>Thursday</span></div>
+        <div class="quiet-row"><span>Rongtuli art school</span><span>Friday</span></div>
+      </div>
+      <div class="bottom-nav">
+        <div class="current"><span class="nav-dot">☑</span>Today</div>
+        <div><span class="nav-dot">☺</span>People</div>
+        <div><span class="nav-dot">▦</span>Month</div>
+        <div><span class="nav-dot">৳</span>Dues</div>
+      </div>
+    </div>
+    <p class="screen-caption">Home screen</p>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="status-bar"><span>9:41</span><span>5G ▮</span></div>
+      <div class="app-bar">
+        <div class="date-line">Wednesday, 7 October</div>
+        <h3>Today</h3>
+      </div>
+      <div class="screen-body">
+        <div class="progress-strip"><span>1 of 4 marked</span><div class="progress-track"><span style="width:25%"></span></div></div>
+        <div class="today-row"><div class="avatar tone-teal">J</div><div class="who"><b>Jalal</b><span>Milk delivery</span></div></div>
+        <div class="today-row"><div class="avatar tone-green">K</div><div class="who"><b>Ustad Karim</b><span>Quran lesson, 4:30 pm</span></div></div>
+      </div>
+      <div class="scrim"></div>
+      <div class="sheet">
+        <div class="grabber"></div>
+        <h4>Milk from Jalal</h4>
+        <div class="sheet-sub">Today, ৳90 a litre</div>
+        <div class="stepper">
+          <button aria-label="Less">−</button>
+          <div class="amount">1 <small>litre</small></div>
+          <button aria-label="More">+</button>
+        </div>
+        <div class="chip-row">
+          <span class="chip">½ litre</span><span class="chip selected">1 litre</span><span class="chip">2 litres</span>
+        </div>
+        <div class="note-field">Add a note for this day</div>
+        <button class="primary-button">Save 1 litre</button>
+        <span class="text-button">No delivery today</span>
+      </div>
+    </div>
+    <p class="screen-caption">Marking a delivery with a quantity</p>
+  </div>
+</section>
+
+<!-- ============ B ============ -->
+<section class="direction">
+  <div class="direction-notes">
+    <span class="letter">B</span>
+    <h2>Register page</h2>
+    <p>The app opens on a ruled page like the paper khata: one row per person, one column per day. Tapping a cell marks it.</p>
+    <ul>
+      <li>The whole household's week is visible at once, so a missed day stands out.</li>
+      <li>Blue tick for came, red cross for absent, a number for litres, a dash for days off.</li>
+      <li>Past days can be corrected in place; the page scrolls sideways through the month.</li>
+      <li>Each person has a full-month page with counts against their target days.</li>
+    </ul>
+  </div>
+
+  <div>
+    <div class="phone register-phone">
+      <div class="status-bar"><span>9:41</span><span>5G ▮</span></div>
+      <div class="app-bar">
+        <div class="month-switch"><h3><span class="bangla-name">হাজিরা</span></h3><span>‹ October 2026 ›</span></div>
+      </div>
+      <div class="register-page">
+        <table class="register">
+          <thead>
+            <tr>
+              <th class="name-cell"></th>
+              <th>3<small>Sat</small></th><th>4<small>Sun</small></th><th>5<small>Mon</small></th><th>6<small>Tue</small></th>
+              <th class="today-column">7<small>Wed</small></th>
+              <th class="total-cell">Oct</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name-cell"><b>Ustad Karim</b><span>Quran</span></td>
+              <td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="cross">✗</span></td><td><span class="tick">✓</span></td>
+              <td class="today-column"><span class="pending-ring"></span></td>
+              <td class="total-cell">4</td>
+            </tr>
+            <tr>
+              <td class="name-cell"><b>Rina</b><span>House help</span></td>
+              <td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="tick">✓</span></td><td><span class="cross">✗</span></td>
+              <td class="today-column"><span class="tick">✓</span></td>
+              <td class="total-cell">6</td>
+            </tr>
+            <tr>
+              <td class="name-cell"><b>Jalal</b><span>Milk, litres</span></td>
+              <td><span class="litres">1</span></td><td><span class="litres">2</span></td><td><span class="litres">1</span></td><td><span class="litres">1</span></td>
+              <td class="today-column"><span class="litres">1</span></td>
+              <td class="total-cell">8</td>
+            </tr>
+            <tr>
+              <td class="name-cell"><b>Sumon Sir</b><span>Maths tutor</span></td>
+              <td><span class="off-day">–</span></td><td><span class="tick">✓</span></td><td><span class="off-day">–</span></td><td><span class="tick">✓</span></td>
+              <td class="today-column"><span class="off-day">–</span></td>
+              <td class="total-cell">3</td>
+            </tr>
+            <tr>
+              <td class="name-cell"><b>Art school</b><span>Rongtuli</span></td>
+              <td><span class="tick">✓</span></td><td><span class="off-day">–</span></td><td><span class="off-day">–</span></td><td><span class="off-day">–</span></td>
+              <td class="today-column"><span class="off-day">–</span></td>
+              <td class="total-cell">2</td>
+            </tr>
+            <tr>
+              <td class="name-cell"><b>Coaching</b><span>Science</span></td>
+              <td><span class="tick">✓</span></td><td><span class="off-day">–</span></td><td><span class="tick">✓</span></td><td><span class="off-day">–</span></td>
+              <td class="today-column"><span class="pending-ring"></span></td>
+              <td class="total-cell">2</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="register-foot"><span>Tap a cell to mark it</span><b>2 left today</b></div>
+        <div class="register-foot" style="padding-top:0"><span><span class="tick">✓</span> came</span><span><span class="cross">✗</span> absent</span><span><span class="litres">1</span> litres</span><span><span class="off-day">–</span> day off</span></div>
+      </div>
+      <div class="bottom-nav">
+        <div class="current"><span class="nav-dot">▦</span>Register</div>
+        <div><span class="nav-dot">☺</span>People</div>
+        <div><span class="nav-dot">৳</span>Dues</div>
+        <div><span class="nav-dot">⚙</span>Settings</div>
+      </div>
+    </div>
+    <p class="screen-caption">Home screen</p>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="status-bar"><span>9:41</span><span>5G ▮</span></div>
+      <div class="app-bar"><div class="date-line">‹ Register</div><h3>October 2026</h3></div>
+      <div class="screen-body">
+        <div class="person-head">
+          <div class="avatar tone-green">K</div>
+          <div><b>Ustad Karim</b><span>Quran lesson, Saturday to Thursday, 4:30 pm</span></div>
+        </div>
+        <div class="month-grid">
+          <div class="weekday">Sat</div><div class="weekday">Sun</div><div class="weekday">Mon</div><div class="weekday">Tue</div><div class="weekday">Wed</div><div class="weekday">Thu</div><div class="weekday">Fri</div>
+          <div></div><div></div><div></div><div></div><div></div>
+          <div><i>1</i><span class="tick">✓</span></div><div><i>2</i><span class="off-day">–</span></div>
+          <div><i>3</i><span class="tick">✓</span></div><div><i>4</i><span class="tick">✓</span></div><div><i>5</i><span class="cross">✗</span></div><div><i>6</i><span class="tick">✓</span></div>
+          <div class="is-today"><i>7</i><span class="pending-ring"></span></div><div><i>8</i></div><div><i>9</i><span class="off-day">–</span></div>
+          <div><i>10</i></div><div><i>11</i></div><div><i>12</i></div><div><i>13</i></div><div><i>14</i></div><div><i>15</i></div><div><i>16</i><span class="off-day">–</span></div>
+          <div><i>17</i></div><div><i>18</i></div><div><i>19</i></div><div><i>20</i></div><div><i>21</i></div><div><i>22</i></div><div><i>23</i><span class="off-day">–</span></div>
+          <div><i>24</i></div><div><i>25</i></div><div><i>26</i></div><div><i>27</i></div><div><i>28</i></div><div><i>29</i></div><div><i>30</i><span class="off-day">–</span></div>
+          <div><i>31</i></div><div></div><div></div><div></div><div></div><div></div><div></div>
+        </div>
+        <div class="tally">
+          <div><b style="color:var(--ink)">4</b><span>came</span></div>
+          <div><b style="color:var(--absent)">1</b><span>absent</span></div>
+          <div><b>26</b><span>target days</span></div>
+        </div>
+        <p class="hint-line">Long-press a day to mark it as a holiday or a make-up lesson.</p>
+      </div>
+      <div class="bottom-nav">
+        <div class="current"><span class="nav-dot">▦</span>Register</div>
+        <div><span class="nav-dot">☺</span>People</div>
+        <div><span class="nav-dot">৳</span>Dues</div>
+        <div><span class="nav-dot">⚙</span>Settings</div>
+      </div>
+    </div>
+    <p class="screen-caption">One person's month</p>
+  </div>
+</section>
+
+<!-- ============ C ============ -->
+<section class="direction">
+  <div class="direction-notes">
+    <span class="letter">C</span>
+    <h2>Month accounts</h2>
+    <p>The app opens on what the household owes. Attendance is still recorded, but it is shown as the reason for each amount.</p>
+    <ul>
+      <li>Each person has a rate: a fixed monthly fee, a fee per visit, or a price per unit.</li>
+      <li>The amount for the month is worked out from the marked days and litres.</li>
+      <li>Advances and part payments are subtracted, and each bill is marked paid when settled.</li>
+      <li>A statement can be sent to the person, for example on WhatsApp, so both sides see the same count.</li>
+    </ul>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="status-bar"><span>9:41</span><span>5G ▮</span></div>
+      <div class="app-bar"><div class="date-line">‹ September 2026 ›</div><h3>Dues</h3></div>
+      <div class="screen-body">
+        <div class="due-banner">
+          <div class="label">Still to pay for September</div>
+          <div class="figure">৳10,380</div>
+          <div class="paid-track"><span></span></div>
+          <div class="split"><span>Paid ৳10,000</span><span>Month total ৳20,380</span></div>
+        </div>
+
+        <div class="account-row">
+          <div class="avatar tone-blue">S</div>
+          <div class="who"><b>Sumon Sir</b><span>13 classes, ৳2,000 advance given</span></div>
+          <div class="money"><b>৳4,500</b><span class="badge due">Due</span></div>
+        </div>
+        <div class="account-row">
+          <div class="avatar tone-green">K</div>
+          <div class="who"><b>Ustad Karim</b><span>Came 25 of 26 days</span></div>
+          <div class="money"><b>৳3,000</b><span class="badge due">Due</span></div>
+        </div>
+        <div class="account-row">
+          <div class="avatar tone-teal">J</div>
+          <div class="who"><b>Jalal</b><span>32 litres at ৳90</span></div>
+          <div class="money"><b>৳2,880</b><span class="badge due">Due</span></div>
+        </div>
+        <div class="account-row">
+          <div class="avatar tone-rust">R</div>
+          <div class="who"><b>Rina</b><span>Came 28 of 30 days</span></div>
+          <div class="money"><b>৳4,500</b><span class="badge paid">Paid 1 Oct</span></div>
+        </div>
+        <div class="account-row">
+          <div class="avatar tone-plum">S</div>
+          <div class="who"><b>Science coaching</b><span>Monthly fee</span></div>
+          <div class="money"><b>৳2,000</b><span class="badge paid">Paid 3 Oct</span></div>
+        </div>
+        <div class="account-row" style="border-bottom:0">
+          <div class="avatar tone-slate">A</div>
+          <div class="who"><b>Rongtuli art school</b><span>Monthly fee</span></div>
+          <div class="money"><b>৳1,500</b><span class="badge paid">Paid 2 Oct</span></div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="current"><span class="nav-dot">৳</span>Dues</div>
+        <div><span class="nav-dot">☑</span>Today</div>
+        <div><span class="nav-dot">☺</span>People</div>
+        <div><span class="nav-dot">⚙</span>Settings</div>
+      </div>
+    </div>
+    <p class="screen-caption">Home screen</p>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="status-bar"><span>9:41</span><span>5G ▮</span></div>
+      <div class="app-bar"><div class="date-line">‹ Dues</div><h3>Sumon Sir</h3></div>
+      <div class="screen-body">
+        <div class="statement">
+          <h5>September 2026, maths tutor</h5>
+          <div class="mini-days">
+            <span>1</span><span>3</span><span>6</span><span>8</span><span>10</span><span>13</span><span class="missed">15</span>
+            <span>17</span><span>20</span><span>22</span><span>24</span><span>27</span><span>28</span><span>29</span>
+          </div>
+          <div class="statement-line"><span>13 classes at ৳500</span><span>৳6,500</span></div>
+          <div class="statement-line minor"><span>Missed 15 Sep, made up 28 Sep</span><span></span></div>
+          <div class="statement-line"><span>Advance given 12 Sep</span><span>− ৳2,000</span></div>
+          <div class="statement-line total"><span>To pay</span><span>৳4,500</span></div>
+        </div>
+        <div class="button-pair">
+          <button class="outline-button">Send statement</button>
+          <button class="primary-button">Mark as paid</button>
+        </div>
+        <div class="section-label" style="margin-top:20px">Earlier months</div>
+        <div class="account-row"><div class="who"><b>August 2026</b><span>12 classes</span></div><div class="money"><b>৳6,000</b><span class="badge paid">Paid 2 Sep</span></div></div>
+        <div class="account-row"><div class="who"><b>July 2026</b><span>14 classes</span></div><div class="money"><b>৳7,000</b><span class="badge paid">Paid 1 Aug</span></div></div>
+        <div class="account-row" style="border-bottom:0"><div class="who"><b>June 2026</b><span>9 classes, Eid break</span></div><div class="money"><b>৳4,500</b><span class="badge paid">Paid 3 Jul</span></div></div>
+      </div>
+      <div class="bottom-nav">
+        <div class="current"><span class="nav-dot">৳</span>Dues</div>
+        <div><span class="nav-dot">☑</span>Today</div>
+        <div><span class="nav-dot">☺</span>People</div>
+        <div><span class="nav-dot">⚙</span>Settings</div>
+      </div>
+    </div>
+    <p class="screen-caption">One person's statement</p>
+  </div>
+</section>
+
+<!-- ============ D ============ -->
+<section class="direction">
+  <div class="direction-notes">
+    <span class="letter">D</span>
+    <h2>Combined month</h2>
+    <p>One screen shows the whole household for the whole month. Every person has a colour, and each day carries a mark for everyone who was due.</p>
+    <ul>
+      <li>Calendar form: a filled dot means came, a red ring means absent, no dot means not due that day.</li>
+      <li>Tapping a day lists who came, who was absent and how much was delivered.</li>
+      <li>Strip form: one row of 30 days per person, so each person's gaps and the month count are visible together.</li>
+      <li>Tapping a name in the legend would filter either form down to that person.</li>
+    </ul>
+    <p>This would be the "Month" tab of direction A, with a switch between the two forms. The sample month is September 2026, which matches the amounts in direction C.</p>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="status-bar"><span>9:41</span><span>5G ▮</span></div>
+      <div class="app-bar"><div class="date-line">‹ September 2026 ›</div><h3>Month</h3></div>
+      <div class="screen-body">
+        <div class="legend" id="combined-legend"></div>
+        <div class="combined-grid" id="combined-calendar"></div>
+        <div class="day-panel" id="combined-day-panel"></div>
+      </div>
+      <div class="bottom-nav">
+        <div><span class="nav-dot">☑</span>Today</div>
+        <div><span class="nav-dot">☺</span>People</div>
+        <div class="current"><span class="nav-dot">▦</span>Month</div>
+        <div><span class="nav-dot">৳</span>Dues</div>
+      </div>
+    </div>
+    <p class="screen-caption">Calendar form, with 14 September selected</p>
+  </div>
+
+  <div>
+    <div class="phone">
+      <div class="status-bar"><span>9:41</span><span>5G ▮</span></div>
+      <div class="app-bar"><div class="date-line">‹ September 2026 ›</div><h3>Month</h3></div>
+      <div class="screen-body">
+        <div class="chip-row" style="justify-content:flex-start; margin: 0 4px 14px">
+          <span class="chip">Calendar</span><span class="chip selected">Strips</span>
+        </div>
+        <div class="strip-axis" id="strip-axis"></div>
+        <div id="strip-list"></div>
+        <p class="hint-line">Tall bar: came, or litres delivered. Short red bar: absent. Thin grey line: not due.</p>
+      </div>
+      <div class="bottom-nav">
+        <div><span class="nav-dot">☑</span>Today</div>
+        <div><span class="nav-dot">☺</span>People</div>
+        <div class="current"><span class="nav-dot">▦</span>Month</div>
+        <div><span class="nav-dot">৳</span>Dues</div>
+      </div>
+    </div>
+    <p class="screen-caption">Strip form, one row per person</p>
+  </div>
+</section>
+
+<script>
+  // Sample data for September 2026. Both forms are drawn from this one table so they cannot disagree.
+  // Weekdays use JavaScript numbering: 0 is Sunday, 5 is Friday, 6 is Saturday.
+  const DAYS_IN_MONTH = 30;
+  const SELECTED_DAY = 14;
+  const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const people = [
+    { name: "Ustad Karim", role: "Quran", colour: "#0E5A4B", weekdays: [0, 1, 2, 3, 4, 6], absentDays: [14], extraDays: [], doubleDays: [], unit: "days" },
+    { name: "Rina", role: "House help", colour: "#A8552A", weekdays: [0, 1, 2, 3, 4, 5, 6], absentDays: [9, 21], extraDays: [], doubleDays: [], unit: "days" },
+    { name: "Jalal", role: "Milk", colour: "#1F7A8C", weekdays: [0, 1, 2, 3, 4, 5, 6], absentDays: [], extraDays: [], doubleDays: [12, 26], unit: "litres" },
+    { name: "Sumon Sir", role: "Maths tutor", colour: "#1E3A8A", weekdays: [0, 2, 4], absentDays: [15], extraDays: [28], doubleDays: [], unit: "classes" },
+    { name: "Art school", role: "Rongtuli", colour: "#4A5568", weekdays: [5, 6], absentDays: [], extraDays: [], doubleDays: [], unit: "days" },
+    { name: "Coaching", role: "Science", colour: "#7A3B69", weekdays: [1, 3, 6], absentDays: [16], extraDays: [], doubleDays: [], unit: "classes" },
+  ];
+
+  function weekdayOf(dayOfMonth) {
+    return new Date(2026, 8, dayOfMonth).getDay();
+  }
+
+  // Returns "came", "absent" or "not-due" for one person on one day.
+  function statusOn(person, dayOfMonth) {
+    if (person.absentDays.includes(dayOfMonth)) return "absent";
+    const isScheduled = person.weekdays.includes(weekdayOf(dayOfMonth));
+    if (isScheduled || person.extraDays.includes(dayOfMonth)) return "came";
+    return "not-due";
+  }
+
+  function amountOn(person, dayOfMonth) {
+    if (statusOn(person, dayOfMonth) !== "came") return 0;
+    return person.doubleDays.includes(dayOfMonth) ? 2 : 1;
+  }
+
+  function monthTotal(person) {
+    let total = 0;
+    for (let day = 1; day <= DAYS_IN_MONTH; day++) total += amountOn(person, day);
+    return total;
+  }
+
+  function drawLegend() {
+    const legend = document.getElementById("combined-legend");
+    for (const person of people) {
+      legend.insertAdjacentHTML("beforeend", `<span><i class="dot" style="background:${person.colour}"></i>${person.name}</span>`);
+    }
+  }
+
+  function drawCalendar() {
+    const calendar = document.getElementById("combined-calendar");
+    for (const label of ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"]) {
+      calendar.insertAdjacentHTML("beforeend", `<div class="weekday">${label}</div>`);
+    }
+    // The week starts on Saturday, so Saturday needs 0 leading blanks and Friday needs 6.
+    const leadingBlanks = (weekdayOf(1) + 1) % 7;
+    const trailingBlanks = (7 - ((leadingBlanks + DAYS_IN_MONTH) % 7)) % 7;
+    for (let blank = 0; blank < leadingBlanks; blank++) calendar.insertAdjacentHTML("beforeend", `<div class="combined-day"></div>`);
+    for (let day = 1; day <= DAYS_IN_MONTH; day++) {
+      let dots = "";
+      for (const person of people) {
+        dots += `<i class="dot is-${statusOn(person, day)}" style="background:${person.colour}"></i>`;
+      }
+      const selectedClass = day === SELECTED_DAY ? " is-selected" : "";
+      calendar.insertAdjacentHTML("beforeend", `<div class="combined-day${selectedClass}"><div class="day-number">${day}</div><div class="dot-set">${dots}</div></div>`);
+    }
+    for (let blank = 0; blank < trailingBlanks; blank++) calendar.insertAdjacentHTML("beforeend", `<div class="combined-day"></div>`);
+  }
+
+  function drawDayPanel() {
+    const panel = document.getElementById("combined-day-panel");
+    panel.insertAdjacentHTML("beforeend", `<h5>${WEEKDAY_NAMES[weekdayOf(SELECTED_DAY)]}, ${SELECTED_DAY} September</h5>`);
+    for (const person of people) {
+      const status = statusOn(person, SELECTED_DAY);
+      if (status === "not-due") continue;
+      let outcome = "Came";
+      if (status === "absent") outcome = "Absent";
+      else if (person.unit === "litres") outcome = amountOn(person, SELECTED_DAY) === 1 ? "1 litre" : `${amountOn(person, SELECTED_DAY)} litres`;
+      panel.insertAdjacentHTML("beforeend",
+        `<div class="day-panel-row"><i class="dot is-${status}" style="background:${person.colour}"></i>${person.name}<span class="what is-${status}">${outcome}</span></div>`);
+    }
+  }
+
+  function drawStrips() {
+    const axis = document.getElementById("strip-axis");
+    for (let day = 1; day <= DAYS_IN_MONTH; day++) {
+      const showsLabel = day === 1 || day % 5 === 0;
+      axis.insertAdjacentHTML("beforeend", `<span>${showsLabel ? day : ""}</span>`);
+    }
+    const list = document.getElementById("strip-list");
+    for (const person of people) {
+      let cells = "";
+      for (let day = 1; day <= DAYS_IN_MONTH; day++) {
+        const doubleClass = amountOn(person, day) === 2 ? " is-double" : "";
+        cells += `<i class="is-${statusOn(person, day)}${doubleClass}" style="background:${person.colour}"></i>`;
+      }
+      list.insertAdjacentHTML("beforeend",
+        `<div class="strip-block"><div class="strip-title"><b>${person.name}</b><span>${monthTotal(person)} ${person.unit}</span></div><div class="strip">${cells}</div></div>`);
+    }
+  }
+
+  drawLegend();
+  drawCalendar();
+  drawDayPanel();
+  drawStrips();
+</script>
+
+</body>
+</html>

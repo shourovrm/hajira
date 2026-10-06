@@ -1,0 +1,30 @@
+package com.rms.hazira.domain
+
+import java.text.DecimalFormat
+
+private val takaFormat = DecimalFormat("#,##0")
+private val quantityFormat = DecimalFormat("0.##")
+
+/** 20380 becomes "৳20,380". A negative amount keeps its minus sign in front of the symbol. */
+fun formatTaka(amountTaka: Int): String {
+    if (amountTaka < 0) {
+        return "−৳" + takaFormat.format(-amountTaka.toLong())
+    }
+    return "৳" + takaFormat.format(amountTaka.toLong())
+}
+
+/** 1.0 becomes "1" and 0.5 becomes "0.5": no trailing zeros. */
+fun formatQuantity(quantity: Double): String {
+    return quantityFormat.format(quantity)
+}
+
+/**
+ * 2.0 and "litre" become "2 litre". The unit is typed by the user and may be in any language,
+ * so it is shown exactly as typed and never pluralised.
+ */
+fun formatQuantityWithUnit(quantity: Double, unitName: String): String {
+    if (unitName.isBlank()) {
+        return formatQuantity(quantity)
+    }
+    return formatQuantity(quantity) + " " + unitName
+}
